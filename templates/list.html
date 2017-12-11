@@ -32,16 +32,20 @@
             <h2>You have searched for: {{toSearch}}</h2>
             <table width="100%" border="1">
                 {% comment %} <tr><th>Results</th></tr> {% endcomment %}
-
+                <tr>
+                    <th>Title</th>
+                    <th>Link To The Video</th>
+                    <th>Count of the searched item</th>
+                </tr>
                 <hr> 
                 {% for video in videos %}
-                <tr>
-                    <td align="center">
-                        {{video.title}}
-                    </td>
-                    <td>Link to the video: <a href="{{video.videoFile.url}}">Open Video</a></td>
+                <tr align="center">
+                    <td>{{video.video.title}}</td>
+                    <td><a style="color: black;" href="{{video.video.videoFile.url}}">Open This Video</a></td>
+                    <td>{{video.count}}</td>
                 </tr>
                 {% endfor %}
+
             </table>
         </div>
     </div>

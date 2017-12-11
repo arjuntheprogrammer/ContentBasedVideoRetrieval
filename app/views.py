@@ -107,11 +107,29 @@ def index(request):
 
 def searchView(request):
     toSearch = request.GET.get("toSearch")
-    print (toSearch)
+    toSearch = toSearch.lower()
+    print ("Searched Item:", toSearch)
     videos = Video.objects.all()
+    targetVideos = []
+    for video in videos:
+        print("\nVideo Title ->", video.title)
+        f=0
+        count=0
+        for key, value in (video.data).items():
+            key = key.lower()
+            if toSearch in key:
+                print("\tKey:", key, "\tCount: ", value)
+                count += value
+                f=1
+        if f==1:
+            targetVideos.append({"video": video, "count": count})
+        print("\n")
+    # Sort videos according to the count of the searched item
+    targetVideos.sort(key=lambda x: x["count"], reverse=True)
+    
     return render(request, "list.html", {
         "toSearch": toSearch,
-        "videos": videos,
+        "videos": targetVideos,
     })
 
 
