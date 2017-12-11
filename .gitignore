@@ -1,0 +1,10 @@
+*.pyc
+/static-files/
+/virenv/
+/env/
+/venv/
+/media-files/
+db.sqlite3
+migrations
+.vscode/
+*.jpg

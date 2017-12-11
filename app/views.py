@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from .models import Video
 
+
+from skimage.measure import structural_similarity as ssim
+import matplotlib.pyplot as plt
 import cv2
 import math
 import numpy as np
@@ -66,8 +69,8 @@ def VidProc(videoPath):
     success, image = vidcap.read()
     count = 0
     while success:
-        if(count == 300):
-            break
+        # if(count == 300):
+        #     break
         success, image = vidcap.read()
         frameId = vidcap.get(1)  # current frame number
 
@@ -78,7 +81,14 @@ def VidProc(videoPath):
 
             # Write frame in frames folder
             cv2.imwrite(src_path+ "frame%d.jpg" % count, image)     # save frame as JPEG file
-
+            if(count>0):
+                img1 = cv2.imread(src_path + "frame" + str(count - 1) + ".jpg", 0)
+                img2 = cv2.imread(src_path + "frame" + str(count) + ".jpg", 0)
+                SSIM = ssim(img1, img2)
+                print("ssim: ",count, " ", SSIM )
+                if(SSIM > .90 ):
+                    print("inside here")
+                    continue
             # Convert Frame Into Text
             # print ("\n\nImage Into String :", get_string("/home/arjun/Desktop/majorProject/frames/frame{0}.jpg".format(count)))
             get_string(src_path + "frame{0}.jpg".format(count))
@@ -98,7 +108,6 @@ def index(request):
 def searchView(request):
     toSearch = request.GET.get("toSearch")
     print (toSearch)
-    print ("here")
     videos = Video.objects.all()
     return render(request, "list.html", {
         "toSearch": toSearch,
@@ -109,13 +118,18 @@ def searchView(request):
 def videoProc(request):
     print("here in videoProc")
     videos = Video.objects.all()
+    videosProcessed = 0
     for video in videos:
+        if(video.data != None):
+            continue
+        print("Video Title", video.title)
         VidProc("/home/arjun/Desktop/majorProjectDjango/ContentBasedVideoExtraction/media-files/" + str(video.videoFile))
-        print("/home/arjun/Desktop/majorProjectDjango/ContentBasedVideoExtraction/media-files/" + str(video.videoFile))
+        # print("/home/arjun/Desktop/majorProjectDjango/ContentBasedVideoExtraction/media-files/" + str(video.videoFile))
         print("\n\ndictOfWords:\n")
         for k, v in dictOfWords.items():
             print (k, " => ", v)
         video.data = dictOfWords
         video.save()
-        dictOfWords = {}
-    return JsonResponse({"name": "videoProc"})   
+        dictOfWords.clear()
+        videosProcessed += 1
+    return JsonResponse({"videosProcessed": videosProcessed})
