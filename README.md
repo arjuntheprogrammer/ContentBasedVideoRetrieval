@@ -23,4 +23,4 @@ provide an accurate result for the search query.
 mainly aimed at real-time computer vision
 4. Django - Django is a high-level Python Web framework that encourages rapid development and clean, pragmatic design.
 
-Note: Please refer the project report for further information.
+Note: Please refer the [project report](https://github.com/arjuntheprogrammer/ContentBasedVideoRetrieval/blob/master/B.%20Tech%20Final%20Year%20Project%20Report.pdf) for further information.
